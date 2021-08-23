@@ -62,8 +62,8 @@ namespace Plex_Discord_Presence
         {
             string response = null;
             try { 
-                response = new WebClient().DownloadString("https://"+ Properties.Settings.Default.PlexDirect +":32400/status/sessions?X-Plex-Token=" + Properties.Settings.Default.PlexToken);
-            } catch
+                ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+                response = new WebClient().DownloadString("https://"+ Properties.Settings.Default.PlexDirect +":32400/status/sessions?X-Plex-Token=" + Properties.Settings.Default.PlexToken);            } catch
             {
                 timer1.Stop();
                 MessageBox.Show("Cannot download to the Plex API");
