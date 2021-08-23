@@ -1,8 +1,7 @@
 # Rich Presence for Plex
 ### Let know your friends what you are watching right now!
 
-
-
+![discord_logo](https://i.imgur.com/SC4uRgx.png)   
 Rich Presence for Plex is Windows GUI app that will grep your current stream from plex and display it as Rich Presence on your Discord profile.
 Unlike other Rich Presences for Plex this doesn't interract with your computer, doesn't scan your PC or web browser. Plex released API for developers, which allows communicate with servers and receiver current streams from your profile, all you need is Discord application ID, Plex Token ID and plex address.  
 
@@ -37,4 +36,3 @@ Since you need to provide a discord application you also need provide a image, y
 ## Other bugs and problems
 Thank you for using my application, actually this is my first attempt to do something in C# so i expect many bugs and problems, please open a issue ticket and i will try to fix it. :) Thank you so much
 
-![discord_logo](https://discord.com/assets/ff41b628a47ef3141164bfedb04fb220.png) ![plex_logo](https://s3.amazonaws.com/frontify-cloud-files-us/frontify/accounts/9a/58813/projects/81095/assets/00/624651/8ba7c3037135ef2a22a44bb6fefa065a-1461946645.png)
