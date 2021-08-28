@@ -20,7 +20,6 @@ namespace Plex_Discord_Presence
         private DiscordRpcClient client;
         private int tick = 0;
         private bool status = false;
-        private bool first_run = false;
         public Form1()
         {
             InitializeComponent();
@@ -28,42 +27,53 @@ namespace Plex_Discord_Presence
             notifyIcon1.Icon = SystemIcons.Application;
             notifyIcon1.BalloonTipTitle = "Rich Presence for Plex";
             notifyIcon1.BalloonTipText = "Rich presence is still running";
-            string[] settings = null;
-            try
-            {
-                settings = File.ReadAllLines("settings.dat");
 
-                Properties.Settings.Default.DiscordID = settings[0];
-                Properties.Settings.Default.PlexToken = settings[1];
-                Properties.Settings.Default.AutoStart = settings[2];
-                Properties.Settings.Default.PlexDirect = settings[3];
+            // Auth sequence
+            PlexAuth PlexController = new PlexAuth();
+            PlexController.Set("14212628094769269459", "Discord Rich Presence For Plex");
+            if (!PlexController.LoadPin("plex_credentials.txt"))
+            {
+                PlexController.Generate();
+                PlexController.Token();
+                PlexController.SavePin("plex_credentials.txt");
+            } else
+            {
+                if (!PlexController.ValidToken())
+                {
+                    PlexController.Token();
+                    PlexController.SavePin("plex_credentials.txt");
+                }
             }
-            catch {
-                MessageBox.Show("Please set a credentials before running");
-            };
-            if (Properties.Settings.Default.AutoStart == "True")
+            Properties.Settings.Default.PlexToken = PlexController.CurrentToken();
+            Properties.Settings.Default.PlexDirect = PlexController.GetServer();
+
+            if (Properties.Settings.Default.PlexToken != null && Properties.Settings.Default.PlexDirect != null)
             {
                 DiscordInitialize();
-                first_run = !first_run;
                 timer1.Start();
                 status = !status;
                 button1.Text = "Stop";
+            } else
+            {
+                MessageBox.Show("Failed to fetch Token or Server URI");
             }
+
         }
 
 
         public void DiscordInitialize()
         {
-            client = new DiscordRpcClient(Properties.Settings.Default.DiscordID);
+            client = new DiscordRpcClient("881197661611495435"); // default plex app
             client.Initialize();
         }
 
         private bool GetPlexData()
         {
             string response = null;
-            try { 
+            try {
                 ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
-                response = new WebClient().DownloadString("https://"+ Properties.Settings.Default.PlexDirect +":32400/status/sessions?X-Plex-Token=" + Properties.Settings.Default.PlexToken);            } catch
+                response = new WebClient().DownloadString(Properties.Settings.Default.PlexDirect +"/status/sessions?X-Plex-Token=" + Properties.Settings.Default.PlexToken);
+            } catch
             {
                 timer1.Stop();
                 MessageBox.Show("Cannot download to the Plex API");
@@ -153,11 +163,6 @@ namespace Plex_Discord_Presence
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            if (first_run == false) {
-                DiscordInitialize();
-                first_run = !first_run;
-            }
-            
 
             if (!status)
             {
@@ -195,8 +200,7 @@ namespace Plex_Discord_Presence
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Form2 f2 = new Form2();
-            f2.ShowDialog();
+
         }
 
         private void Form1_Resize(object sender, EventArgs e)

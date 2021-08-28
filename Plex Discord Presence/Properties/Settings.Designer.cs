@@ -26,18 +26,6 @@ namespace Plex_Discord_Presence.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DiscordID {
-            get {
-                return ((string)(this["DiscordID"]));
-            }
-            set {
-                this["DiscordID"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string PlexToken {
             get {
                 return ((string)(this["PlexToken"]));
