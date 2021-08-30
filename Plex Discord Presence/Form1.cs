@@ -20,6 +20,8 @@ namespace Plex_Discord_Presence
         private DiscordRpcClient client;
         private int tick = 0;
         private bool status = false;
+        private dynamic now = DateTime.UtcNow;
+        private bool detected = false;
         public Form1()
         {
             InitializeComponent();
@@ -94,14 +96,22 @@ namespace Plex_Discord_Presence
                     string text_second = null;
                     if (stuff["MediaContainer"]["@size"] > 1)
                     {
+                        if (detected == false)
+                        {
+                            // setting new datetime
+                            now = DateTime.UtcNow;
+                            detected = !detected;
+                        }
+
                         if (stuff["MediaContainer"]["Video"][0]["@type"] == "movie")
                         {
-                            text = stuff["MediaContainer"]["Video"][0]["@title"];
+                            text = "▶ " + stuff["MediaContainer"]["Video"][0]["@title"];
 
                         }
                         else
                         {
-                            text = stuff["MediaContainer"]["Video"][0]["@grandparentTitle"] + " " + stuff["MediaContainer"]["Video"][0]["@title"];
+                            text = "▶ " + stuff["MediaContainer"]["Video"][0]["@grandparentTitle"];
+                            text_second = "S" + int.Parse(stuff["MediaContainer"][0]["Video"]["@parentIndex"].ToString()).ToString("00") + "E" + int.Parse(stuff["MediaContainer"]["Video"][0]["@index"].ToString()).ToString("00") + " " + stuff["MediaContainer"]["Video"][0]["@title"];
                         }
 
                     }
@@ -109,14 +119,17 @@ namespace Plex_Discord_Presence
                     {
                         if (stuff["MediaContainer"]["Video"]["@type"] == "movie")
                         {
-                            text = stuff["MediaContainer"]["Video"]["@title"];
+                            // Movie
+                            text = "▶ " + stuff["MediaContainer"]["Video"]["@title"];
                             text_second = "";
 
                         }
                         else
                         {
-                            text = stuff["MediaContainer"]["Video"]["@grandparentTitle"];
-                            text_second = stuff["MediaContainer"]["Video"]["@title"];
+                        
+                        // TV Show
+                        text = "▶ " + stuff["MediaContainer"]["Video"]["@grandparentTitle"];
+                        text_second = "S"+ int.Parse(stuff["MediaContainer"]["Video"]["@parentIndex"].ToString()).ToString("00") + "E" + int.Parse(stuff["MediaContainer"]["Video"]["@index"].ToString()).ToString("00") + " "+ stuff["MediaContainer"]["Video"]["@title"];
                         }
 
                     }
@@ -134,9 +147,11 @@ namespace Plex_Discord_Presence
                 }
                 else
                 {
+                    detected = false;
                     label1.Text = "Nothing Playing";
                     label5.Text = "";
                     client.ClearPresence();
+                    now = DateTime.UtcNow;
                 }
 
             return true;
@@ -148,8 +163,10 @@ namespace Plex_Discord_Presence
             {
                 Details = Details,
                 State = State,
-                Assets = PlexData
+                Assets = PlexData,
+                Timestamps = new Timestamps(now)
             });
+            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -174,6 +191,7 @@ namespace Plex_Discord_Presence
             else
             {
                 timer1.Stop();
+                detected = false;
                 client.ClearPresence();
                 status = !status;
                 button1.Text = "Run";
