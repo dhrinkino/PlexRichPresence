@@ -34,5 +34,5 @@ For first time App will generate your pin and code will open your native web bro
 ## Other bugs and problems
 --
 
-# Thank you for using my application, actually this is my first attempt to do something in C# so i expect many bugs and problems, please open a issue ticket and i will try to fix it. :) Thank you so much
+### Thank you for using my application, actually this is my first attempt to do something in C# so i expect many bugs and problems, please open a issue ticket and i will try to fix it. :) Thank you so much
 
